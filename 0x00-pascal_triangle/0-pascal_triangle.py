@@ -16,10 +16,3 @@ def pascal_triangle(n):
         triangle.append(current_row)
 
     return triangle
-
-# Example usage:
-n = 5
-triangle = pascal_triangle(n)
-for row in triangle:
-    print(row)
-
