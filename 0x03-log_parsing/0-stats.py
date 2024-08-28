@@ -1,50 +1,46 @@
 #!/usr/bin/python3
+
+""" script that reads stdin line by line and computes metrics """
+
 import sys
 
-# Initialize counters and storage variables
-total_size = 0
-status_code_count =
-{200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
-line_count = 0
+
+def printStatus(dic, size):
+    """ Prints information """
+    print("File size: {:d}".format(size))
+    for i in sorted(dic.keys()):
+        if dic[i] != 0:
+            print("{}: {:d}".format(i, dic[i]))
 
 
-def print_statistics():
-    """Print the statistics of file size and status codes."""
-    print(f"File size: {total_size}")
-    for code in sorted(status_code_count.keys()):
-        if status_code_count[code] > 0:
-            print(f"{code}: {status_code_count[code]}")
+# sourcery skip: use-contextlib-suppress
+statusCodes = {"200": 0, "301": 0, "400": 0, "401": 0, "403": 0,
+               "404": 0, "405": 0, "500": 0}
 
+count = 0
+size = 0
 
 try:
     for line in sys.stdin:
-        # Split the line and check format
-        parts = line.split()
-    if len(parts) < 7 or not parts[-2].isdigit() or not parts[-1].isdigit():
-            continue
+        if count != 0 and count % 10 == 0:
+            printStatus(statusCodes, size)
 
-        # Extract the file size and status code
-     try:
-            file_size = int(parts[-1])
-            status_code = int(parts[-2])
+        stlist = line.split()
+        count += 1
 
-            # Update total file size and status code counts
-            total_size += file_size
-            if status_code in status_code_count:
-                status_code_count[status_code] += 1
-        except ValueError:
-            continue
+        try:
+            size += int(stlist[-1])
+        except Exception:
+            pass
 
-        line_count += 1
+        try:
+            if stlist[-2] in statusCodes:
+                statusCodes[stlist[-2]] += 1
+        except Exception:
+            pass
+    printStatus(statusCodes, size)
 
-        # Print stats every 10 lines
-        if line_count % 10 == 0:
-            print_statistics()
 
 except KeyboardInterrupt:
-    # Print final stats on keyboard interruption
-    print_statistics()
+    printStatus(statusCodes, size)
     raise
-
-# Print final stats after EOF
-print_statistics()
