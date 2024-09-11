@@ -5,6 +5,7 @@ N Queens Problem: Solve the N Queens problem using backtracking.
 
 import sys
 
+
 def is_safe(board, row, col, n):
     """
     Check if it's safe to place a queen at board[row][col].
@@ -24,7 +25,9 @@ def is_safe(board, row, col, n):
         if board[i][j] == 1:
             return False
 
-    return True
+
+return True
+
 
 def solve_n_queens(board, col, n, solutions):
     """
@@ -50,6 +53,7 @@ def solve_n_queens(board, col, n, solutions):
 
     return res
 
+
 def n_queens(n):
     """
     Initialize the board and solve the N Queens problem.
@@ -58,6 +62,7 @@ def n_queens(n):
     solutions = []
     solve_n_queens(board, 0, n, solutions)
     return solutions
+
 
 if __name__ == "__main__":
     # Input validation
