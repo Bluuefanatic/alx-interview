@@ -1,42 +1,53 @@
 #!/usr/bin/node
 
-// Import the request module
 const request = require('request');
 
-// Get the Movie ID from the first positional argument
-const movieID = process.argv[2];
+const movieId = process.argv[2];
+const filmEndPoint = 'https://swapi-api.hbtn.io/api/films/' + movieId;
+let people = [];
+const names = [];
 
-// Base URL for the Star Wars API
-const apiUrl = `https://swapi.dev/api/films/${movieID}/`;
+const requestCharacters = async () => {
+  await new Promise(resolve => request(filmEndPoint, (err, res, body) => {
+    if (err || res.statusCode !== 200) {
+      console.error('Error: ', err, '| StatusCode: ', res.statusCode);
+    } else {
+      const jsonBody = JSON.parse(body);
+      people = jsonBody.characters;
+      resolve();
+    }
+  }));
+};
 
-// Make an HTTP GET request to the Star Wars API to fetch the movie data
-request(apiUrl, (error, response, body) => {
-  if (error) {
-    console.error('Error:', error);
-    return;
+const requestNames = async () => {
+  if (people.length > 0) {
+    for (const p of people) {
+      await new Promise(resolve => request(p, (err, res, body) => {
+        if (err || res.statusCode !== 200) {
+          console.error('Error: ', err, '| StatusCode: ', res.statusCode);
+        } else {
+          const jsonBody = JSON.parse(body);
+          names.push(jsonBody.name);
+          resolve();
+        }
+      }));
+    }
+  } else {
+    console.error('Error: Got no Characters for some reason');
   }
+};
 
-  // Parse the JSON response body
-  const data = JSON.parse(body);
+const getCharNames = async () => {
+  await requestCharacters();
+  await requestNames();
 
-  // Ensure the movie data exists
-  if (!data.characters) {
-    console.error('Invalid Movie ID');
-    return;
+  for (const n of names) {
+    if (n === names[names.length - 1]) {
+      process.stdout.write(n);
+    } else {
+      process.stdout.write(n + '\n');
+    }
   }
+};
 
-  // Iterate through the character URLs
-  data.characters.forEach((characterUrl) => {
-    // Make an HTTP GET request to fetch each character's data
-    request(characterUrl, (charError, charResponse, charBody) => {
-      if (charError) {
-        console.error('Error:', charError);
-        return;
-      }
-
-      // Parse the character data and print the name
-      const characterData = JSON.parse(charBody);
-      console.log(characterData.name);
-    });
-  });
-});
+getCharNames();
