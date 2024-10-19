@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Prime Game - Determine the winner after multiple rounds."""
 
+
 def sieve_of_eratosthenes(n):
     """Return a list of prime numbers up to n using Sieve of Eratosthenes."""
     sieve = [True] * (n + 1)
@@ -11,6 +12,7 @@ def sieve_of_eratosthenes(n):
                 sieve[j] = False
     return [i for i in range(2, n + 1) if sieve[i]]
 
+
 def count_primes(n, primes):
     """Count how many primes exist up to n."""
     count = 0
@@ -20,16 +22,14 @@ def count_primes(n, primes):
         count += 1
     return count
 
+
 def isWinner(x, nums):
     """
     Determine the winner of x rounds of the Prime Game.
-    
     Maria plays first, Ben plays second, both play optimally.
-    
     Args:
         x (int): the number of rounds.
         nums (list of int): list of n values for each round.
-    
     Returns:
         str: name of the player who won the most rounds or None if tie.
     """
